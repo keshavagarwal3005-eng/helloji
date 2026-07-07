@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Catch the Love!</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #ffe6f2; font-family: 'Arial', sans-serif; text-align: center; }
+        canvas { display: block; background: #fff0f5; margin: 0 auto; border: 2px solid #ff4d94; }
+        #messageBox { position: absolute; top: 20%; width: 100%; font-size: 24px; color: #ff1a75; font-weight: bold; pointer-events: none; text-shadow: 1px 1px 2px #fff; }
+    </style>
+</head>
+<body>
+    <div id="messageBox">Move the basket to catch the hearts!</div>
+    <canvas id="gameCanvas"></canvas>
+
+<script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let messages = ["You are my world", "Meri pyaarii ho aap", "Aapko kha jaunga", "I love you sooo muchhhhh", "You are the most beautiful", "You are my Angel", "Chalo chalo aur pakdo kuch padhne ko milega", "Gussa mat karna na zada der nahi laga banane mai", "Meri rasmali hoo aap"];
+    let basket = { x: canvas.width/2 - 50, y: canvas.height - 100, w: 100, h: 20 };
+    let hearts = [];
+
+    document.addEventListener("mousemove", (e) => basket.x = e.clientX - 50);
+
+    function spawnHeart() {
+        hearts.push({ x: Math.random() * canvas.width, y: 0, speed: 2 + Math.random() * 2, msg: messages[Math.floor(Math.random() * messages.length)] });
+    }
+
+    setInterval(spawnHeart, 2000);
+
+    function update() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Draw Basket
+        ctx.fillStyle = "#ff4d94";
+        ctx.fillRect(basket.x, basket.y, basket.w, basket.h);
+
+        hearts.forEach((h, index) => {
+            h.y += h.speed;
+            ctx.fillStyle = "red";
+            ctx.beginPath();
+            ctx.arc(h.x, h.y, 15, 0, Math.PI * 2);
+            ctx.fill();
+
+            if (h.y > basket.y && h.x > basket.x && h.x < basket.x + basket.w) {
+                document.getElementById("messageBox").innerText = h.msg;
+                hearts.splice(index, 1);
+            }
+            if (h.y > canvas.height) hearts.splice(index, 1);
+        });
+        requestAnimationFrame(update);
+    }
+    update();
+</script>
+</body>
+</html>
